@@ -49,7 +49,7 @@ void Client::connectToServer() {
 }
 
 void Client::sendMove(char *move) {
-    int n = write(clientSocket , move , sizeof(move));
+    int n = write(clientSocket , move , 255);//sizeof(move));
     delete(move);
     if (n == -1) {
         throw "Error";
@@ -57,8 +57,8 @@ void Client::sendMove(char *move) {
 }
 
 char* Client::getMove() {
-    char move[4096];
-    int n = read(clientSocket , move , 4096);
+    char move[255];
+    int n = read(clientSocket , move , 255);
 
     char *buff = new char(sizeof(move));
     strcpy(buff , move);
