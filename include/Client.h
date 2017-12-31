@@ -8,6 +8,9 @@
 class Client {
 public:
     Client(const char *serverIP , int serverPort);
+
+    Client();
+
     void connectToServer();
 
     void sendMove(char *move);

@@ -19,6 +19,8 @@
 class RemotePlayer: public Player {
 public:
     RemotePlayer();
+    RemotePlayer(char *send_server);
+
     Cell chooseMove(GameLogic *gl , Board *b);
     char getTeam();
     void sendToSocket(char *data);
@@ -26,6 +28,9 @@ public:
     void oppMove (Cell c);
     Cell lastMove();
     ~RemotePlayer();
+    char *little_menu();
+    void show_list();
+
 protected:
     char xORo_;
     Client client;
@@ -33,6 +38,7 @@ protected:
     char bufferCurrentAns[4096];
     int sock;
     Cell currentMove;
+    int currect_name;
 };
 
 #endif //HOMEWORK_REMOTEPLAYER_H
