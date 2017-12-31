@@ -18,7 +18,7 @@ void RemotePlayer::receiveFromSocket(int sock) {
     int bytes;
     char *buffer;
     buffer = client.getMove();
-    cout << buffer << endl;
+    cout << "buffer is: "<<buffer << endl;
     if (bytes < 0) {
         perror("error reading in receive from socket");
     }
