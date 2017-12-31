@@ -20,6 +20,7 @@ int main(int argc, char ** argv) {
     configFile.open("../configuration_for_client.txt");// optional!
 
     // configFile.open("/home/tomer/CLionProjects/fromTomerMail/done/homeWork/ex3/configuration_for_client.txt");
+    /*
     string ipAdd;
     configFile >> ipAdd;
     int port;
@@ -27,7 +28,7 @@ int main(int argc, char ** argv) {
     const char *serverIP = ipAdd.c_str();
     Client client = Client(serverIP , port);
     client.sendMove("start");
-
+*/
     Game * g = new Game(8);
     g->run();
     delete(g);

@@ -49,8 +49,14 @@ void Client::connectToServer() {
 }
 
 void Client::sendMove(char *move) {
+//<<<<<<< HEAD older Addady
+  //  int n = write(clientSocket , move , 255);//sizeof(move));
+  //  delete(move);
+//======= Dayan new
     int n = write(clientSocket , move , 255);//sizeof(move));
-    delete(move);
+   // int n = write(clientSocket , move , sizeof(move));
+    if (strcmp(move , "list_games") != 0) { delete(move); }
+//>>>>>>>
     if (n == -1) {
         throw "Error";
     }
@@ -64,4 +70,6 @@ char* Client::getMove() {
     strcpy(buff , move);
     return buff;
 }
+
+Client::Client() {}
 

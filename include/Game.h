@@ -16,6 +16,7 @@ class Game {
         Board* b_; //game board.
         bool isExsit (list<Cell> ls,Cell c);
         int remote;
+        char *firstStart();
     public:
         void printMoves(list<Cell> l, char xORo);
         void run();
