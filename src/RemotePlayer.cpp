@@ -18,19 +18,29 @@ void RemotePlayer::receiveFromSocket(int sock) {
     int bytes;
     char *buffer;
     buffer = client.getMove();
+    cout << buffer << endl;
     if (bytes < 0) {
         perror("error reading in receive from socket");
     }
     if (strcmp(buffer , "first")==0) {
+        currect_name = 1;
         firstPlayer = 0;
     }
     else if (strcmp(buffer , "second")==0) {
+        currect_name = 1;
+
         firstPlayer = 1;
     }
     else if (strcmp(buffer , "waiting")==0) {
+        currect_name = 1;
+
         cout << "Waiting for other player to join .." << endl;
+    } else if (strcmp(buffer , "-1") == 0) {
+        cout << "Name not available , try another one\n";
     }
     else {
+        currect_name = 1;
+
         strcpy(bufferCurrentAns , buffer);
     }
     delete(buffer);
@@ -43,6 +53,80 @@ void RemotePlayer::receiveFromSocket(int sock) {
  */
 void RemotePlayer::sendToSocket(char *data) {
     client.sendMove(data);
+}
+
+RemotePlayer::RemotePlayer(char *send_server){
+    currect_name = 0;
+    //first player initialize.
+    firstPlayer = -1;
+    ifstream configFile;
+    configFile.open("../configuration_for_client.txt");// optional!
+
+    // configFile.open("/home/tomer/CLionProjects/fromTomerMail/done/homeWork/ex3/configuration_for_client.txt");
+    string ipAdd;
+    configFile >> ipAdd;
+    int port;
+    configFile >> port;
+    const char *serverIP = ipAdd.c_str();
+
+    client = Client(serverIP , port);
+    //client = Client("127.0.0.1" , 9000);
+    cout << send_server<<endl;
+
+    if (strcmp(send_server , "list_games") == 0) {
+        //show_list();
+        char *ans = "list_games";
+        while (true) {
+            if (strcmp(ans , "list_games") != 0) {
+                sendToSocket(ans);
+                break;
+            } else {
+                sendToSocket("list_games");
+                show_list();
+            }
+            client = Client(serverIP , port);
+            ans = little_menu();
+        }
+    } else { sendToSocket(send_server); }
+
+    cout << "Connected to server ." << endl;
+    //in the first time we recieve the ans could be waiting or answer.
+    while (currect_name != 0){
+        if (currect_name == 0) {
+            client = Client(serverIP , port);
+            char *s;
+            while (true) {
+                s = little_menu();
+                if (strcmp(s , " ")!= 0) {
+                    if (strcmp(s , "list_games") == 0) {
+                        show_list();
+                    } else {
+                        break;
+                    }
+                    client = Client(serverIP , port);
+                }
+            }
+            sendToSocket(s);
+        } else { break; }
+        receiveFromSocket(sock);
+    }
+    cout << "*****************" << endl;
+    while (true) {
+        if (firstPlayer == -1) {
+            receiveFromSocket(sock);
+        } else { break; }
+    }
+    cout << "--------------------" << endl;
+
+    cout << firstPlayer;
+    //at the first time , the server give an answer different the x,y so it effect it.
+    if (firstPlayer == 0) {
+        this->xORo_ = 'O';
+    }
+    if (firstPlayer == 1) {
+        this->xORo_ = 'X';
+    }
+
 }
 /**
  * Constractor.
@@ -158,4 +242,49 @@ char RemotePlayer::getTeam() {
  */
 RemotePlayer::~RemotePlayer() {
 //    close(sock);
+}
+
+void RemotePlayer::show_list() {
+    while (true){
+        receiveFromSocket(sock);
+        //char *c = bufferCurrentAns;
+        if (strcmp(bufferCurrentAns , "endLoop") == 0) { break; }
+
+        cout<< bufferCurrentAns << endl;
+    }
+}
+
+char* RemotePlayer::little_menu() {
+    cout << "1) start a game , press - 1\n";
+    cout << "2) join a game , press - 2\n";
+    cout << "3) seeing a list of games , press - 3\n";
+    int choice;
+    cin >> choice;
+    if (choice == 1) {
+        cout << "Enter the name of the game you want to create :\n";
+        char *gameNamge = new char();
+        char *s = "start ";
+        cin >> gameNamge;
+        char * toSend = new char(sizeof(s) + sizeof(gameNamge));
+        strcpy(toSend , s);
+        strcat(toSend , gameNamge);
+        delete(gameNamge);
+        return toSend;
+    } else if (choice == 2) {
+        cout << "Enter the name of the game you want to join :\n";
+        char *s = "join ";
+        char *gameNamge = new char();
+        cin >> gameNamge;
+        char * toSend = new char(sizeof(s) + sizeof(gameNamge));
+        strcpy(toSend , s);
+        strcat(toSend , gameNamge);
+        delete(gameNamge);
+        return toSend;
+    } else if (choice == 3) {
+        char *s = "list_games";
+        return s;
+    } else {
+        cout << "Invalid option , please try again\n";
+        return " ";
+    }
 }

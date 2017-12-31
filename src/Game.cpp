@@ -11,6 +11,43 @@
 #include "../include/RemotePlayer.h"
 
 using  namespace std;
+
+char* Game::firstStart() {
+    cout << "1) For start a game , press - 1\n";
+    cout << "2) For join a game , press - 2\n";
+    cout << "3) For see a list of games , press - 3\n";
+    int choice;
+    cin >> choice;
+    if (choice == 1) {
+        cout << "Enter the name of the game you want to create :\n";
+        char *gameNamge = new char();
+        char *s = "start ";
+        cin >> gameNamge;
+        char * toSend = new char(sizeof(s) + sizeof(gameNamge));
+        strcpy(toSend , s);
+        strcat(toSend , gameNamge);
+        delete(gameNamge);
+        return toSend;
+    } else if (choice == 2) {
+        cout << "Enter the name of the game you want to join :\n";
+        char *s = "join ";
+        char *gameNamge = new char();
+        cin >> gameNamge;
+        char * toSend = new char(sizeof(s) + sizeof(gameNamge));
+        strcpy(toSend , s);
+        strcat(toSend , gameNamge);
+        delete(gameNamge);
+        return toSend;
+    } else if (choice == 3) {
+        char *s = "list_games";
+        return s;
+    } else {
+        cout << "Invalid option , please try again\n";
+        return " ";
+    }
+
+}
+
 Game::Game(int size) {
     /** char r;
      cout << "if you want to play against the comuter press y if not press other key "<< endl;
@@ -25,11 +62,19 @@ Game::Game(int size) {
         //this->oplayer_ = new HumanPlayer('O');
         this->xPlayer_ = new HumanPlayer('X');
     } else if (ans == 3){
+
         //means that we play with server.
         this->gameLogic_ = new RegularLogic();
         this->b_ = new Board(size);
 
-        Player *c = new RemotePlayer();
+        char *send = "";
+        while (true) {
+            send = firstStart();
+            if (strcmp(send , " ") != 0) { break; }
+        }
+
+
+        Player *c = new RemotePlayer(send);
         if (c->getTeam() == 'O') {
             remote = 1;
             this->oplayer_ = c;

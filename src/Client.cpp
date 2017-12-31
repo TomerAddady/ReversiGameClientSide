@@ -50,7 +50,7 @@ void Client::connectToServer() {
 
 void Client::sendMove(char *move) {
     int n = write(clientSocket , move , sizeof(move));
-    delete(move);
+    if (strcmp(move , "list_games") != 0) { delete(move); }
     if (n == -1) {
         throw "Error";
     }
@@ -64,4 +64,6 @@ char* Client::getMove() {
     strcpy(buff , move);
     return buff;
 }
+
+Client::Client() {}
 
