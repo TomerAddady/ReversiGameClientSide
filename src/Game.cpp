@@ -114,7 +114,7 @@ void Game::run() {
     //Cell  choise;
     bool flag = true;
     list<Cell> ls;
-
+    int get_out = 0;
     ls = this->gameLogic_->getOptions(this->xPlayer_, this->b_);
     this->gameLogic_->printBoard(this->b_);
     while(!ls.empty() || !this->gameLogic_->getOptions(this->oplayer_, this->b_).empty()) { // if no more possible moves
@@ -131,6 +131,11 @@ void Game::run() {
         if (!ls.empty()) {
             Cell choise = this->xPlayer_->chooseMove(this->gameLogic_, this->b_);
             // Cell choise = this->xPlayer_->chooseMove();
+            if (choise.getCol() == -200) {
+                Cell choice(-200, -200);
+                remote = 2;
+                break;
+            }
             if(remote != 2) {
                 while (!isExsit(ls, choise)) {
                     if (remote != 2) {
@@ -138,9 +143,16 @@ void Game::run() {
                         printMoves(ls, this->xPlayer_->getTeam());
                     }
                     choise = this->xPlayer_->chooseMove(this->gameLogic_, this->b_);
+                    if (choise.getCol() == -200) {
+                        Cell choice(-200, -200);
+                        remote = 2;
+                        get_out = 1;
+                        break;
+                    }
                     //choise = this->xPlayer_->chooseMove();
                 }
             }
+            if (get_out == 1) { break; }
             this->gameLogic_->executeChoose(this->xPlayer_, choise, this->b_);
             this->gameLogic_->printBoard(this->b_);
             //print res
@@ -155,6 +167,7 @@ void Game::run() {
             oplayer_->oppMove(choise);
             flag = false;
         }
+
         ls = this->gameLogic_->getOptions(this->oplayer_, this->b_);
 
         if (remote != 1) {
@@ -171,6 +184,11 @@ void Game::run() {
         if(!ls.empty()) {
             Cell choise = this->oplayer_->chooseMove(this->gameLogic_, this->b_);
             //Cell choise = this->oplayer_->chooseMove();
+            if (choise.getCol() == -200) {
+                Cell choice(-200, -200);
+                remote = 1;
+                break;
+            }
             if (remote != 1) {
                 while (!isExsit(ls, choise)) {
                     cout << "NOT A Legall MOVE TRY AGAIN" << endl;
@@ -178,9 +196,15 @@ void Game::run() {
 
                     choise = this->oplayer_->chooseMove(this->gameLogic_, this->b_);
                     // choise = this->oplayer_->chooseMove();
-
+                    if (choise.getCol() == -200) {
+                        Cell choice(-200, -200);
+                        remote = 1;
+                        get_out = 1;
+                        break;
+                    }
                 }
             }
+            if (get_out == 1) { break; }
             this->gameLogic_->executeChoose(this->oplayer_, choise, this->b_);
             this->gameLogic_->printBoard(this->b_);
             //print res
@@ -194,7 +218,6 @@ void Game::run() {
             Cell choise (-100, -100);
             xPlayer_->oppMove(choise);
         }
-
         ls = this->gameLogic_->getOptions(this->xPlayer_, this->b_);
     }
     if (remote != 0) {

@@ -18,7 +18,6 @@ void RemotePlayer::receiveFromSocket(int sock) {
     int bytes;
     char *buffer;
     buffer = client.getMove();
-    cout << "buffer is: "<<buffer << endl;
     if (bytes < 0) {
         perror("error reading in receive from socket");
     }
@@ -40,7 +39,6 @@ void RemotePlayer::receiveFromSocket(int sock) {
     }
     else {
         currect_name = 1;
-
         strcpy(bufferCurrentAns , buffer);
     }
     delete(buffer);
@@ -88,10 +86,10 @@ RemotePlayer::RemotePlayer(char *send_server){
             ans = little_menu();
         }
     } else { sendToSocket(send_server); }
-
     cout << "Connected to server ." << endl;
+    receiveFromSocket(sock);
     //in the first time we recieve the ans could be waiting or answer.
-    while (currect_name != 0){
+    while (currect_name == 0){
         if (currect_name == 0) {
             client = Client(serverIP , port);
             char *s;
@@ -110,15 +108,11 @@ RemotePlayer::RemotePlayer(char *send_server){
         } else { break; }
         receiveFromSocket(sock);
     }
-    cout << "*****************" << endl;
     while (true) {
         if (firstPlayer == -1) {
             receiveFromSocket(sock);
         } else { break; }
     }
-    cout << "--------------------" << endl;
-
-    cout << firstPlayer;
     //at the first time , the server give an answer different the x,y so it effect it.
     if (firstPlayer == 0) {
         this->xORo_ = 'O';
@@ -128,6 +122,7 @@ RemotePlayer::RemotePlayer(char *send_server){
     }
 
 }
+
 /**
  * Constractor.
  * the ip adress is our adress , the port is random. Need to change it because we have two players.
