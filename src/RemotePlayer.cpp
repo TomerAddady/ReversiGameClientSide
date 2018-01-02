@@ -36,9 +36,11 @@ void RemotePlayer::receiveFromSocket(int sock) {
         cout << "Waiting for other player to join .." << endl;
     } else if (strcmp(buffer , "-1") == 0) {
         cout << "Name not available , try another one\n";
+    } else if (strcmp(buffer , "close") == 0) {
+        cout << "Error occur . Please try later .. \n";
     }
     else {
-        currect_name = 1;
+        //currect_name = 1;
         strcpy(bufferCurrentAns , buffer);
     }
     delete(buffer);
@@ -52,8 +54,15 @@ void RemotePlayer::receiveFromSocket(int sock) {
 void RemotePlayer::sendToSocket(char *data) {
     client.sendMove(data);
 }
+/**
+ * Constractor by ex5 , sending the current action by command line.
+ *
+ */
+RemotePlayer::RemotePlayer() {
+    //first show the little menu !
+    char *send_server = little_menu();
 
-RemotePlayer::RemotePlayer(char *send_server){
+    //current name is variable that check if the name of the game current , when become 1 - not ava.
     currect_name = 0;
     //first player initialize.
     firstPlayer = -1;
@@ -61,20 +70,29 @@ RemotePlayer::RemotePlayer(char *send_server){
     configFile.open("../configuration_for_client.txt");// optional!
 
     // configFile.open("/home/tomer/CLionProjects/fromTomerMail/done/homeWork/ex3/configuration_for_client.txt");
+    //get the ip and port from txt.
     string ipAdd;
     configFile >> ipAdd;
     int port;
     configFile >> port;
     const char *serverIP = ipAdd.c_str();
-
+    //new connection - first connection.
+    /*
+     * We see a lot of new clients in this function
+     * Each client mean new connection between us and the server
+     * in the server , we can see after we get the answer we want ,
+     * the connection is closing.
+     * That means we need to re - open the conncection and we do it by client = CLient()
+     */
     client = Client(serverIP , port);
+    cout << "Connected to server ." << endl;
+
     //client = Client("127.0.0.1" , 9000);
-    cout << send_server<<endl;
 
     if (strcmp(send_server , "list_games") == 0) {
-        //show_list();
         char *ans = "list_games";
         while (true) {
+            //if we want something differ then list games exit.
             if (strcmp(ans , "list_games") != 0) {
                 sendToSocket(ans);
                 break;
@@ -82,21 +100,24 @@ RemotePlayer::RemotePlayer(char *send_server){
                 sendToSocket("list_games");
                 show_list();
             }
+            //new connection and get from little menu.
             client = Client(serverIP , port);
             ans = little_menu();
         }
     } else { sendToSocket(send_server); }
-    cout << "Connected to server ." << endl;
+    //in this while we wait till the server get a game name available.
+    //when he does , he continue. remember , available name game is when current_name differ than 0.
     receiveFromSocket(sock);
-    //in the first time we recieve the ans could be waiting or answer.
-    while (currect_name == 0){
+    while (true){
         if (currect_name == 0) {
             client = Client(serverIP , port);
             char *s;
             while (true) {
                 s = little_menu();
                 if (strcmp(s , " ")!= 0) {
+                    //in case the client want to see list of games.
                     if (strcmp(s , "list_games") == 0) {
+                        sendToSocket(s);
                         show_list();
                     } else {
                         break;
@@ -108,6 +129,8 @@ RemotePlayer::RemotePlayer(char *send_server){
         } else { break; }
         receiveFromSocket(sock);
     }
+    //now wait untill we get if the player is first or second.
+    //there is a chance that we get garbage so its in the while !
     while (true) {
         if (firstPlayer == -1) {
             receiveFromSocket(sock);
@@ -120,45 +143,6 @@ RemotePlayer::RemotePlayer(char *send_server){
     if (firstPlayer == 1) {
         this->xORo_ = 'X';
     }
-
-}
-
-/**
- * Constractor.
- * the ip adress is our adress , the port is random. Need to change it because we have two players.
- */
-RemotePlayer ::RemotePlayer() : client(client) {
-    //first player initialize.
-    firstPlayer = -1;
-
-    ifstream configFile;
-    configFile.open("../configuration_for_client.txt");// optional!
-
-     // configFile.open("/home/tomer/CLionProjects/fromTomerMail/done/homeWork/ex3/configuration_for_client.txt");
-    string ipAdd;
-    configFile >> ipAdd;
-    int port;
-    configFile >> port;
-    const char *serverIP = ipAdd.c_str();
-
-    client = Client(serverIP , port);
-    //client = Client("127.0.0.1" , 9000);
-
-    cout << "Connected to server ." << endl;
-    //in the first time we recieve the ans could be waiting or answer.
-    receiveFromSocket(sock);
-    if (firstPlayer == -1) {
-        receiveFromSocket(sock);
-    }
-
-    //at the first time , the server give an answer different the x,y so it effect it.
-    if (firstPlayer == 0) {
-        this->xORo_ = 'O';
-    }
-    if (firstPlayer == 1) {
-        this->xORo_ = 'X';
-    }
-
 }
 /**
  * Choose move by the recieve from function.
@@ -238,8 +222,11 @@ char RemotePlayer::getTeam() {
 RemotePlayer::~RemotePlayer() {
 //    close(sock);
 }
-
+/**
+ * Function that get from the server games name and print them.
+ */
 void RemotePlayer::show_list() {
+    cout << "Current games: \n";
     while (true){
         receiveFromSocket(sock);
         //char *c = bufferCurrentAns;
@@ -247,15 +234,21 @@ void RemotePlayer::show_list() {
 
         cout<< bufferCurrentAns << endl;
     }
+    cout << " " << endl;
 }
-
+/**
+ * Function that represent little menu.
+ * @return - answer in this menu.
+ */
 char* RemotePlayer::little_menu() {
+    //the options.
     cout << "1) start a game , press - 1\n";
     cout << "2) join a game , press - 2\n";
     cout << "3) seeing a list of games , press - 3\n";
     int choice;
     cin >> choice;
     if (choice == 1) {
+        //if we want to play new game.
         cout << "Enter the name of the game you want to create :\n";
         char *gameNamge = new char();
         char *s = "start ";
@@ -266,6 +259,7 @@ char* RemotePlayer::little_menu() {
         delete(gameNamge);
         return toSend;
     } else if (choice == 2) {
+        //if we want to join a game.
         cout << "Enter the name of the game you want to join :\n";
         char *s = "join ";
         char *gameNamge = new char();
@@ -276,6 +270,7 @@ char* RemotePlayer::little_menu() {
         delete(gameNamge);
         return toSend;
     } else if (choice == 3) {
+        //if we want to print a list of game are playing now.
         char *s = "list_games";
         return s;
     } else {

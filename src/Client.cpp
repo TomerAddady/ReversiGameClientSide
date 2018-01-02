@@ -66,6 +66,8 @@ char* Client::getMove() {
     char move[255];
     int n = read(clientSocket , move , 255);
 
+    if (n <= 0) { return "close";}
+
     char *buff = new char(sizeof(move));
     strcpy(buff , move);
     return buff;

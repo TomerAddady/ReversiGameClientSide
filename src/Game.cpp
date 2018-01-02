@@ -11,42 +11,11 @@
 #include "../include/RemotePlayer.h"
 
 using  namespace std;
+/**
+ * First start is the function of the little menu , in the
+ * @return
+ */
 
-char* Game::firstStart() {
-    cout << "1) For start a game , press - 1\n";
-    cout << "2) For join a game , press - 2\n";
-    cout << "3) For see a list of games , press - 3\n";
-    int choice;
-    cin >> choice;
-    if (choice == 1) {
-        cout << "Enter the name of the game you want to create :\n";
-        char *gameNamge = new char();
-        char *s = "start ";
-        cin >> gameNamge;
-        char * toSend = new char(sizeof(s) + sizeof(gameNamge));
-        strcpy(toSend , s);
-        strcat(toSend , gameNamge);
-        delete(gameNamge);
-        return toSend;
-    } else if (choice == 2) {
-        cout << "Enter the name of the game you want to join :\n";
-        char *s = "join ";
-        char *gameNamge = new char();
-        cin >> gameNamge;
-        char * toSend = new char(sizeof(s) + sizeof(gameNamge));
-        strcpy(toSend , s);
-        strcat(toSend , gameNamge);
-        delete(gameNamge);
-        return toSend;
-    } else if (choice == 3) {
-        char *s = "list_games";
-        return s;
-    } else {
-        cout << "Invalid option , please try again\n";
-        return " ";
-    }
-
-}
 
 Game::Game(int size) {
     /** char r;
@@ -67,21 +36,15 @@ Game::Game(int size) {
         this->gameLogic_ = new RegularLogic();
         this->b_ = new Board(size);
 
-        char *send = "";
-        while (true) {
-            send = firstStart();
-            if (strcmp(send , " ") != 0) { break; }
-        }
-
-
-        Player *c = new RemotePlayer(send);
+        Player *c = new RemotePlayer();
+        //by the choice of the remote player we will be the opp.
         if (c->getTeam() == 'O') {
-            remote = 1;
+            remote = 1; //means that we are o and he is x
             this->oplayer_ = c;
             this->xPlayer_ = new HumanPlayer('X');
 
         } else {
-            remote = 2;
+            remote = 2; //means that we are x and he is o
             this->xPlayer_ = c;
             this->oplayer_ = new HumanPlayer('O');
         }
