@@ -12,7 +12,7 @@ int ConsolePainter:: printMenu() {
     char r;
     cout << "Welcome to Reversi!" << endl;
     cout << "Choose an opponent type:" << endl;
-    cout << "if you want to play against the comuter press y if not press other key "<< endl;
+   // cout << "if you want to play against the comuter press y if not press other key "<< endl;
     cout << "1. a human local player" << endl;
     cout << "2. an AI player" << endl;
     cout << "3. a remote player" << endl;

@@ -67,7 +67,7 @@ RemotePlayer::RemotePlayer() {
     //first player initialize.
     firstPlayer = -1;
     ifstream configFile;
-    configFile.open("../configuration_for_client.txt");// optional!
+    configFile.open("configuration_for_client.txt");// optional!
 
     // configFile.open("/home/tomer/CLionProjects/fromTomerMail/done/homeWork/ex3/configuration_for_client.txt");
     //get the ip and port from txt.
@@ -76,7 +76,8 @@ RemotePlayer::RemotePlayer() {
     int port;
     configFile >> port;
     const char *serverIP = ipAdd.c_str();
-    //new connection - first connection.
+    cout << port << " --- " << ipAdd << endl;
+
     /*
      * We see a lot of new clients in this function
      * Each client mean new connection between us and the server
