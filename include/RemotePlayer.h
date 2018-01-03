@@ -24,7 +24,8 @@ public:
     Cell chooseMove(GameLogic *gl , Board *b);
     char getTeam();
     void sendToSocket(char *data);
-    void receiveFromSocket(int sock);
+
+    int receiveFromSocket(int sock);
     void oppMove (Cell c);
     Cell lastMove();
     ~RemotePlayer();

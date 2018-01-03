@@ -24,7 +24,7 @@ Cell HumanPlayer :: chooseMove (GameLogic * gL, Board * b) {
             if (cin.fail()) {
                 cin.clear(); // clears error flags
                 cin.ignore();
-                if (r == 0 && c == 'jjjjj' && close_game == 0) {
+                if (r == 0 && close_game == 0) {
                     close_game++;
                     r = -1;
                     c = -1;

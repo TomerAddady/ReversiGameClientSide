@@ -18,20 +18,14 @@
 int main(int argc, char ** argv) {
     ifstream configFile;
     configFile.open("../configuration_for_client.txt");// optional!
-
-    // configFile.open("/home/tomer/CLionProjects/fromTomerMail/done/homeWork/ex3/configuration_for_client.txt");
-    /*
-    string ipAdd;
-    configFile >> ipAdd;
-    int port;
-    configFile >> port;
-    const char *serverIP = ipAdd.c_str();
-    Client client = Client(serverIP , port);
-    client.sendMove("start");
-*/
-    Game * g = new Game(8);
-    g->run();
-    delete(g);
+    //Game *g;
+    try {
+        Game *g = new Game(8);
+        delete (g);
+    } catch (const char * msg) {
+       // delete (g);
+        cout << "server closed! try to run again later!" << endl;
+    }
 
 }
 

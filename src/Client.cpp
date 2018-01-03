@@ -45,6 +45,8 @@ void Client::connectToServer() {
 
     serverAddress.sin_port = htons(serverPort);
     if (connect(clientSocket , (struct sockaddr *)&serverAddress , sizeof(serverAddress)) == -1) {
+       // throw "Error";
+        cout << "enable to connect to the server" << endl;
         throw "Error";
     }
 }
@@ -56,7 +58,9 @@ void Client::sendMove(char *move) {
 //======= Dayan new
     signal(SIGPIPE , SIG_IGN);
     int n = write(clientSocket , move , 255);//sizeof(move));
-   // int n = write(clientSocket , move , sizeof(move));
+    if (n == 0) {
+        throw "error on write. server diconnected.";
+    }
     if (strcmp(move , "list_games") != 0) { delete(move); }
 //>>>>>>>
     if (n == -1) {
@@ -69,6 +73,7 @@ char* Client::getMove() {
     int n = read(clientSocket , move , 255);
 
     if (n <= 0) {
+        throw "error";
         return "close";
     }
 

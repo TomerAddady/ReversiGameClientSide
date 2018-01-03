@@ -21,42 +21,50 @@ Game::Game(int size) {
     /** char r;
      cout << "if you want to play against the comuter press y if not press other key "<< endl;
      cin >>r;*/
-    ConsolePainter *painter = new ConsolePainter ();
-    int ans = painter->printMenu();
-    remote = 0;
-    if (ans == 2){//painter->printMenu() == 1) {
-        this->gameLogic_ = new RegularLogic();
-        this->b_ = new Board(size);
-        this->oplayer_ = new IOEPlayer('O');
-        //this->oplayer_ = new HumanPlayer('O');
-        this->xPlayer_ = new HumanPlayer('X');
-    } else if (ans == 3){
+    ConsolePainter *painter = new ConsolePainter();
+   // try {
 
-        //means that we play with server.
-        this->gameLogic_ = new RegularLogic();
-        this->b_ = new Board(size);
-
-        Player *c = new RemotePlayer();
-        //by the choice of the remote player we will be the opp.
-        if (c->getTeam() == 'O') {
-            remote = 1; //means that we are o and he is x
-            this->oplayer_ = c;
+        int ans = painter->printMenu();
+        remote = 0;
+        if (ans == 2) {//painter->printMenu() == 1) {
+            this->gameLogic_ = new RegularLogic();
+            this->b_ = new Board(size);
+            this->oplayer_ = new IOEPlayer('O');
+            //this->oplayer_ = new HumanPlayer('O');
             this->xPlayer_ = new HumanPlayer('X');
+        } else if (ans == 3) {
 
-        } else {
-            remote = 2; //means that we are x and he is o
-            this->xPlayer_ = c;
+            //means that we play with server.
+            this->gameLogic_ = new RegularLogic();
+            this->b_ = new Board(size);
+
+            Player *c = new RemotePlayer();
+            //by the choice of the remote player we will be the opp.
+            if (c->getTeam() == 'O') {
+                remote = 1; //means that we are o and he is x
+                this->oplayer_ = c;
+                this->xPlayer_ = new HumanPlayer('X');
+
+            } else {
+                remote = 2; //means that we are x and he is o
+                this->xPlayer_ = c;
+                this->oplayer_ = new HumanPlayer('O');
+            }
+        } else if (ans == 1) {
+            this->gameLogic_ = new RegularLogic();
+            this->b_ = new Board(size);
+            //this->oplayer_ = new IOEPlayer('O');
             this->oplayer_ = new HumanPlayer('O');
+            this->xPlayer_ = new HumanPlayer('X');
         }
-    } else if (ans == 1){
-        this->gameLogic_ = new RegularLogic();
-        this->b_ = new Board(size);
-        //this->oplayer_ = new IOEPlayer('O');
-        this->oplayer_ = new HumanPlayer('O');
-        this->xPlayer_ = new HumanPlayer('X');
-    }
+        this->run();
+        delete(painter);
+//    } catch (const char * msg) {
+//        cout << "in catch" << endl;
+        //delete(painter);
+//        return ;
+//    }
 
-    delete(painter);
 }
 Game :: ~Game() {
     delete(this->xPlayer_);

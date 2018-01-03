@@ -14,7 +14,7 @@
  * Function that recieve from socket.
  * @param sock - the sock we send.
  */
-void RemotePlayer::receiveFromSocket(int sock) {
+int RemotePlayer::receiveFromSocket(int sock) {
     int bytes;
     char *buffer;
     buffer = client.getMove();
@@ -40,13 +40,14 @@ void RemotePlayer::receiveFromSocket(int sock) {
         cout << "Error occur . Please try later .. \n";
         strcpy(bufferCurrentAns , " ");
         firstPlayer = 1;
-        return;
+        return -1;
     }
     else {
         //currect_name = 1;
         strcpy(bufferCurrentAns , buffer);
     }
     delete (buffer);
+    return 1;
 }
 /**
  * Function that send the move.
@@ -72,7 +73,6 @@ RemotePlayer::RemotePlayer() {
     ifstream configFile;
     configFile.open("configuration_for_client.txt");// optional!
 
-    // configFile.open("/home/tomer/CLionProjects/fromTomerMail/done/homeWork/ex3/configuration_for_client.txt");
     //get the ip and port from txt.
     string ipAdd;
     configFile >> ipAdd;
@@ -94,7 +94,7 @@ RemotePlayer::RemotePlayer() {
     //client = Client("127.0.0.1" , 9000);
 
     if (strcmp(send_server , "list_games") == 0) {
-        char *ans = "list_games";
+        char * ans = "list_games";
         while (true) {
             //if we want something differ then list games exit.
             if (strcmp(ans , "list_games") != 0) {
@@ -105,7 +105,14 @@ RemotePlayer::RemotePlayer() {
                 show_list();
             }
             //new connection and get from little menu.
-            client = Client(serverIP , port);
+           // try {
+                client = Client(serverIP , port);
+           // } catch (const char * msg) {
+              //  break;
+           //     return ;
+           // }
+
+
             ans = little_menu();
         }
     } else { sendToSocket(send_server); }
@@ -237,7 +244,10 @@ RemotePlayer::~RemotePlayer() {
 void RemotePlayer::show_list() {
     cout << "Current games: \n";
     while (true){
-        receiveFromSocket(sock);
+        int res = receiveFromSocket(sock);
+        if (res == -1) {
+            break;
+        }
         //char *c = bufferCurrentAns;
         if (strcmp(bufferCurrentAns , "endLoop") == 0) { break; }
 
@@ -280,7 +290,7 @@ char* RemotePlayer::little_menu() {
         return toSend;
     } else if (choice == 3) {
         //if we want to print a list of game are playing now.
-        char *s = "list_games";
+        char  * s = "list_games";
         return s;
     } else {
         cout << "Invalid option , please try again\n";

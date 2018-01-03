@@ -625,6 +625,8 @@ string.h
 -
 unistd.h
 -
+csignal
+-
 
 /home/tomer/Documents/advancedProgramingExerises/src/client/src/ConsolePainter.cpp
 iostream
