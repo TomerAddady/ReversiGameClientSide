@@ -11,6 +11,7 @@
 #include <netdb.h>
 #include <string.h>
 #include <unistd.h>
+#include <csignal>
 
 using namespace std;
 
@@ -53,12 +54,13 @@ void Client::sendMove(char *move) {
   //  int n = write(clientSocket , move , 255);//sizeof(move));
   //  delete(move);
 //======= Dayan new
+    signal(SIGPIPE , SIG_IGN);
     int n = write(clientSocket , move , 255);//sizeof(move));
    // int n = write(clientSocket , move , sizeof(move));
     if (strcmp(move , "list_games") != 0) { delete(move); }
 //>>>>>>>
     if (n == -1) {
-        throw "Error";
+        //throw "Error";
     }
 }
 
@@ -66,7 +68,9 @@ char* Client::getMove() {
     char move[255];
     int n = read(clientSocket , move , 255);
 
-    if (n <= 0) { return "close";}
+    if (n <= 0) {
+        return "close";
+    }
 
     char *buff = new char(sizeof(move));
     strcpy(buff , move);

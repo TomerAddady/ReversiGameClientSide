@@ -38,12 +38,15 @@ void RemotePlayer::receiveFromSocket(int sock) {
         cout << "Name not available , try another one\n";
     } else if (strcmp(buffer , "close") == 0) {
         cout << "Error occur . Please try later .. \n";
+        strcpy(bufferCurrentAns , " ");
+        firstPlayer = 1;
+        return;
     }
     else {
         //currect_name = 1;
         strcpy(bufferCurrentAns , buffer);
     }
-    delete(buffer);
+    delete (buffer);
 }
 /**
  * Function that send the move.
@@ -159,6 +162,11 @@ Cell RemotePlayer::chooseMove(GameLogic *gl, Board *b) {
     int i = 0;
     receiveFromSocket(sock);
 
+    if (strcmp(bufferCurrentAns , " ") == 0) {
+        Cell re = Cell(-300,-300);
+        return re;
+    }
+
     for(i = 0; i < strlen(bufferCurrentAns); i++) {
         // if (bufferCurrentAns[i] == NULL) { break; }
         if (bufferCurrentAns[i] == ',') {
@@ -183,7 +191,7 @@ Cell RemotePlayer::chooseMove(GameLogic *gl, Board *b) {
  * @param c - the move.
  */
 void RemotePlayer::oppMove(Cell c) {
-    if (c.getRow() == -200) {
+    if (c.getRow() == -200 || c.getRow() == -300) {
         char *s = new char(20);
         strcpy(s , "END");
         sendToSocket(s);

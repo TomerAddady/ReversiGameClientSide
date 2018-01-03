@@ -97,8 +97,8 @@ void Game::run() {
             if (choise.getCol() == -200) {
                 Cell choice(-200, -200);
                 remote = 2;
-                break;
-            }
+                return;
+            } else if (choise.getCol() == - 300) { return; }
             if(remote != 2) {
                 while (!isExsit(ls, choise)) {
                     if (remote != 2) {
@@ -110,8 +110,8 @@ void Game::run() {
                         Cell choice(-200, -200);
                         remote = 2;
                         get_out = 1;
-                        break;
-                    }
+                        return;
+                    } else if (choise.getCol() == - 300) { return; }
                     //choise = this->xPlayer_->chooseMove();
                 }
             }
@@ -150,8 +150,8 @@ void Game::run() {
             if (choise.getCol() == -200) {
                 Cell choice(-200, -200);
                 remote = 1;
-                break;
-            }
+                return;
+            } else if (choise.getCol() == - 300) { return; }
             if (remote != 1) {
                 while (!isExsit(ls, choise)) {
                     cout << "NOT A Legall MOVE TRY AGAIN" << endl;
@@ -163,8 +163,8 @@ void Game::run() {
                         Cell choice(-200, -200);
                         remote = 1;
                         get_out = 1;
-                        break;
-                    }
+                        return;
+                    } else if (choise.getCol() == - 300) { return; }
                 }
             }
             if (get_out == 1) { break; }
@@ -188,6 +188,7 @@ void Game::run() {
         Cell choice(-200, -200);
         if (remote == 2) { xPlayer_->oppMove(choice); }
         if (remote == 1) { oplayer_->oppMove(choice); }
+
     }
     char res = this->gameLogic_->getWinner(this->b_);
     if(res == 'T') {
