@@ -67,13 +67,14 @@ Game::Game(int size) {
 
 }
 Game :: ~Game() {
+    cout << "de";
     delete(this->xPlayer_);
     delete(this->oplayer_);
-    // cout << "banana" << endl;
+    cout << "de";
+
     delete(this->gameLogic_);
     delete(this->b_);
-
-    // cout << "banana5" << endl;
+    cout << "de";
 
 }
 /**

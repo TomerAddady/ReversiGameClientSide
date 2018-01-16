@@ -71,7 +71,7 @@ RemotePlayer::RemotePlayer() {
     //first player initialize.
     firstPlayer = -1;
     ifstream configFile;
-    configFile.open("configuration_for_client.txt");// optional!
+    configFile.open("../configuration_for_client.txt");// optional!
 
     //get the ip and port from txt.
     string ipAdd;
@@ -249,7 +249,9 @@ void RemotePlayer::show_list() {
             break;
         }
         //char *c = bufferCurrentAns;
-        if (strcmp(bufferCurrentAns , "endLoop") == 0) { break; }
+        if (strcmp(bufferCurrentAns , "endLoop") == 0) {
+            break;
+        }
 
         cout<< bufferCurrentAns << endl;
     }

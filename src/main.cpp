@@ -18,12 +18,12 @@
 int main(int argc, char ** argv) {
     ifstream configFile;
     configFile.open("../configuration_for_client.txt");// optional!
-    //Game *g;
+    Game *g;
     try {
-        Game *g = new Game(8);
+        g = new Game(3);
         delete (g);
     } catch (const char * msg) {
-       // delete (g);
+        delete (g);
         cout << "server closed! try to run again later!" << endl;
     }
 
